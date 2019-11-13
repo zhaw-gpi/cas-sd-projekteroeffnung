@@ -1,0 +1,77 @@
+<form name="camundaForm">
+    <table class="table">
+        <tbody>
+            <tr>
+                <th class="col-md-3">Projektname</th>
+                <td>{{projektName}}</td>
+            </tr>
+            <tr>
+                <th class="col-md-3">Gesamtkosten</th>
+                <td>{{gesamtKosten}}</td>
+            </tr>
+
+            <tr>
+                <th class="col-md-3">Projektzeitraum</th>
+                <td>{{projektStartDatum | date: 'd.M.yyyy'}} - {{projektEndDatum | date: 'd.M.yyyy'}}</td>
+            </tr>
+
+            <tr>
+                <th class="col-md-3">Projektleiter</th>
+                <td>{{projektLeiter}}</td>
+            </tr>
+
+            <tr>
+                <th class="col-md-3">Projektmitarbeiter</th>
+                <td>{{projektMitarbeiter}} ({{mitarbeiterStartDatum | date: 'd.M.yyyy'}} - {{mitarbeiterEndDatum | date: 'd.M.yyyy'}})</td>
+            </tr>
+
+            <tr>
+                <th class="col-md-3">Bemerkungen</th>
+                <td>{{bemerkungen}}</td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="form-group">
+        <label for="inhaltlichBewilligt">
+            Bewilligt?*
+        </label>
+        <input class="form-control" name="inhaltlichBewilligt" cam-variable-type="Boolean"
+            cam-variable-name="inhaltlichBewilligt" type="checkbox">
+    </div>
+
+    <div class="form-group">
+        <label for="begruendungGeschaeftsleitung">
+            Begründung bei Ablehnung
+        </label>
+        <textarea class="form-control" name="begruendungGeschaeftsleitung" cam-variable-type="String"
+            cam-variable-name="begruendungGeschaeftsleitung"></textarea>
+    </div>
+
+    <script cam-script type="text/javascript">
+        var variableManager = camForm.variableManager;
+
+        camForm.on('form-loaded', function () {
+            variableManager.fetchVariable('projektName');
+            variableManager.fetchVariable('gesamtKosten');
+            variableManager.fetchVariable('projektStartDatum');
+            variableManager.fetchVariable('projektEndDatum');
+            variableManager.fetchVariable('projektleiter');
+            variableManager.fetchVariable('projektMitarbeiter');
+            variableManager.fetchVariable('mitarbeiterStartDatum');
+            variableManager.fetchVariable('mitarbeiterEndDatum');
+            variableManager.fetchVariable('bemerkungen');
+        });
+
+        camForm.on('variables-fetched', function () {
+            $scope.projektName = variableManager.variableValue('projektName');
+            $scope.gesamtKosten = variableManager.variableValue('gesamtKosten');
+            $scope.projektStartDatum = variableManager.variableValue('projektStartDatum')
+            $scope.projektEndDatum = variableManager.variableValue('projektEndDatum');
+            $scope.projektLeiter = variableManager.variableValue('projektleiter').name;
+            $scope.projektMitarbeiter = variableManager.variableValue('projektMitarbeiter').name;
+            $scope.mitarbeiterStartDatum = variableManager.variableValue('mitarbeiterStartDatum');
+            $scope.mitarbeiterEndDatum = variableManager.variableValue('mitarbeiterEndDatum');
+            $scope.bemerkungen = variableManager.variableValue('bemerkungen');
+        });
+    </script>
+</form>

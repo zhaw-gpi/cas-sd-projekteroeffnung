@@ -1,0 +1,175 @@
+<form name="camundaForm">
+    <div class="form-group">
+        <label for="projektName">
+            Projekttitel*
+        </label>
+        <input class="form-control" name="projektName" cam-variable-type="String" cam-variable-name="projektName"
+            type="text" required>
+    </div>
+    <div class="form-group">
+        <label for="gesamtKosten">
+            Geplante Kosten*
+        </label>
+        <input class="form-control" name="gesamtKosten" cam-variable-type="Long" cam-variable-name="gesamtKosten"
+            type="number" required>
+    </div>
+    <div class="form-group">
+        <label for="projektStartDatum">
+            Geplanter Projektstart*
+        </label>
+        <p class="input-group">
+            <input type="text" cam-variable-name="projektStartDatum" cam-variable-type="Date" class="form-control"
+                uib-datepicker-popup="yyyy-MM-dd'T'HH:mm:ss" is-open="dateFieldOpenedprojektStartDatum" required />
+
+            <span class="input-group-btn">
+                <button type="button" class="btn btn-default" ng-click="openprojektStartDatum($event)">
+                    <i class="glyphicon glyphicon-calendar"></i>
+                </button>
+            </span>
+        </p>
+        <script cam-script type="text/form-script">
+                          $scope.openprojektStartDatum = function($event) {
+                            $event.preventDefault();
+                            $event.stopPropagation();
+      
+                            $scope.dateFieldOpenedprojektStartDatum = true;
+                          };
+                        </script>
+    </div>
+    <div class="form-group">
+        <label for="projektEndDatum">
+            Geplantes Projektende*
+        </label>
+        <p class="input-group">
+            <input type="text" cam-variable-name="projektEndDatum" cam-variable-type="Date" class="form-control"
+                uib-datepicker-popup="yyyy-MM-dd'T'HH:mm:ss" is-open="dateFieldOpenedprojektEndDatum" required />
+
+            <span class="input-group-btn">
+                <button type="button" class="btn btn-default" ng-click="openprojektEndDatum($event)">
+                    <i class="glyphicon glyphicon-calendar"></i>
+                </button>
+            </span>
+        </p>
+        <script cam-script type="text/form-script">
+                          $scope.openprojektEndDatum = function($event) {
+                            $event.preventDefault();
+                            $event.stopPropagation();
+      
+                            $scope.dateFieldOpenedprojektEndDatum = true;
+                          };
+                        </script>
+    </div>
+
+
+
+    <!-- Variante "einfach" mit select gemäss https://code.angularjs.org/1.7.8/docs/api/ng/directive/ngOptions
+    <div class="form-group">
+        <label>Mitarbeiter*</label>
+        <select class="form-control" name="ausgewaehlterMitarbeiter" ng-model="mitarbeiterModel"
+            ng-options="mitarbeiter.name for mitarbeiter in mitarbeiterListeModel | orderBy:'name' track by mitarbeiter.id"
+            required>
+        </select>
+    </div>-->
+
+    <!-- Variante komplexer mit typeahead gemäss https://angular-ui.github.io/bootstrap/#!#typeahead-->
+    <div class="form-group">
+        <label>Projektleiter*</label>
+        <input type="text" class="form-control" ng-model="projektleiterModel"
+            uib-typeahead="mitarbeiter as mitarbeiter.name for mitarbeiter in mitarbeiterListeModel | orderBy:'name' | filter:$viewValue | limitTo:8" required>
+    </div>
+
+    <div class="form-group">
+        <label>Projektmitarbeiter*</label>
+        <input type="text" class="form-control" ng-model="mitarbeiterModel"
+            uib-typeahead="mitarbeiter as mitarbeiter.name for mitarbeiter in mitarbeiterListeModel | orderBy:'name' | filter:$viewValue | limitTo:8" required>
+    </div>
+
+    <div class="form-group">
+        <label for="mitarbeiterStartDatum">
+            Einsatzbeginn Mitarbeiter*
+        </label>
+        <p class="input-group">
+            <input type="text" cam-variable-name="mitarbeiterStartDatum" cam-variable-type="Date" class="form-control"
+                uib-datepicker-popup="yyyy-MM-dd'T'HH:mm:ss" is-open="dateFieldOpenedmitarbeiterStartDatum" required />
+
+            <span class="input-group-btn">
+                <button type="button" class="btn btn-default" ng-click="openmitarbeiterStartDatum($event)">
+                    <i class="glyphicon glyphicon-calendar"></i>
+                </button>
+            </span>
+        </p>
+        <script cam-script type="text/form-script">
+                          $scope.openmitarbeiterStartDatum = function($event) {
+                            $event.preventDefault();
+                            $event.stopPropagation();
+      
+                            $scope.dateFieldOpenedmitarbeiterStartDatum = true;
+                          };
+                        </script>
+    </div>
+    <div class="form-group">
+        <label for="mitarbeiterEndDatum">
+            Einsatzende Mitarbeiter*
+        </label>
+        <p class="input-group">
+            <input type="text" cam-variable-name="mitarbeiterEndDatum" cam-variable-type="Date" class="form-control"
+                uib-datepicker-popup="yyyy-MM-dd'T'HH:mm:ss" is-open="dateFieldOpenedmitarbeiterEndDatum" required />
+
+            <span class="input-group-btn">
+                <button type="button" class="btn btn-default" ng-click="openmitarbeiterEndDatum($event)">
+                    <i class="glyphicon glyphicon-calendar"></i>
+                </button>
+            </span>
+        </p>
+        <script cam-script type="text/form-script">
+                          $scope.openmitarbeiterEndDatum = function($event) {
+                            $event.preventDefault();
+                            $event.stopPropagation();
+      
+                            $scope.dateFieldOpenedmitarbeiterEndDatum = true;
+                          };
+                        </script>
+    </div>
+    <div class="form-group">
+        <label for="bemerkungen">
+            Bemerkungen
+        </label>
+        <textarea class="form-control" name="bemerkungen" cam-variable-type="String" cam-variable-name="bemerkungen" ></textarea>
+    </div>
+
+    <script cam-script type="text/javascript">
+        var variableManager = camForm.variableManager;
+
+        camForm.on('variables-fetched', function () {
+            var restUrl = "http://localhost:8090/pmapi/v1/mitarbeiter";
+
+            fetch(restUrl).then(function (response) {
+                return response.json();
+            }).then(function (dataInJson) {
+                $scope.mitarbeiterListeModel = dataInJson;
+            });
+        });
+
+        camForm.on('submit', function () {
+            variableManager.createVariable({
+                name: 'projektleiter',
+                type: 'Object',
+                value: $scope.projektleiterModel,
+                valueInfo: {
+                    serializationDataFormat: 'application/json',
+                    objectTypeName: 'ch.zhaw.sd.projekteroeffnung.restresponses.Mitarbeiter'
+                }
+            });
+
+            variableManager.createVariable({
+                name: 'projektMitarbeiter',
+                type: 'Object',
+                value: $scope.mitarbeiterModel,
+                valueInfo: {
+                    serializationDataFormat: 'application/json',
+                    objectTypeName: 'ch.zhaw.sd.projekteroeffnung.restresponses.Mitarbeiter'
+                }
+            });
+        });
+    </script>
+</form>

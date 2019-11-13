@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_0zcn0xl" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.3.1">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_0zcn0xl" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.1.0">
   <bpmn:collaboration id="Collaboration_18ft0fk">
     <bpmn:participant id="ProzessportalParticipant" name="Prozessportal" processRef="Projekteroeffnung" />
     <bpmn:participant id="ProjektmanagementDatenbankParticipant" name="Projektmanagement-Datenbank" />
@@ -37,52 +37,7 @@
         <bpmn:flowNodeRef>ProjektantragEingereichtStartEvent</bpmn:flowNodeRef>
       </bpmn:lane>
     </bpmn:laneSet>
-    <bpmn:startEvent id="ProjektantragEingereichtStartEvent" name="Projektantrag eingereicht" camunda:initiator="antragsteller">
-      <bpmn:extensionElements>
-        <camunda:formData>
-          <camunda:formField id="projektName" label="Projekttitel*" type="string">
-            <camunda:validation>
-              <camunda:constraint name="required" />
-            </camunda:validation>
-          </camunda:formField>
-          <camunda:formField id="gesamtKosten" label="Geplante Kosten*" type="long">
-            <camunda:validation>
-              <camunda:constraint name="required" />
-            </camunda:validation>
-          </camunda:formField>
-          <camunda:formField id="projektStartDatum" label="Geplanter Projektstart*" type="date">
-            <camunda:validation>
-              <camunda:constraint name="required" />
-            </camunda:validation>
-          </camunda:formField>
-          <camunda:formField id="projektEndDatum" label="Geplantes Projektende*" type="date">
-            <camunda:validation>
-              <camunda:constraint name="required" />
-            </camunda:validation>
-          </camunda:formField>
-          <camunda:formField id="projektleiter" label="Projektleiter*" type="string">
-            <camunda:validation>
-              <camunda:constraint name="required" />
-            </camunda:validation>
-          </camunda:formField>
-          <camunda:formField id="projektMitarbeiter" label="Projektmitarbeiter*" type="string">
-            <camunda:validation>
-              <camunda:constraint name="required" />
-            </camunda:validation>
-          </camunda:formField>
-          <camunda:formField id="mitarbeiterStartDatum" label="Einsatzbeginn Mitarbeiter*" type="date">
-            <camunda:validation>
-              <camunda:constraint name="required" />
-            </camunda:validation>
-          </camunda:formField>
-          <camunda:formField id="mitarbeiterEndDatum" label="Einsatzende Mitarbeiter*" type="date">
-            <camunda:validation>
-              <camunda:constraint name="required" />
-            </camunda:validation>
-          </camunda:formField>
-          <camunda:formField id="bemerkungen" label="Bemerkungen" type="string" />
-        </camunda:formData>
-      </bpmn:extensionElements>
+    <bpmn:startEvent id="ProjektantragEingereichtStartEvent" name="Projektantrag eingereicht" camunda:formKey="embedded:app:forms/ProjektantragAusfuellenForm.html" camunda:initiator="antragsteller">
       <bpmn:outgoing>SequenceFlow_1eotl33</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:exclusiveGateway id="ExclusiveGateway_0kdynbm">
@@ -103,29 +58,11 @@
     <bpmn:endEvent id="ProjektEroffnetEndEvent" name="Projekt eröffnet">
       <bpmn:incoming>SequenceFlow_1w3aixm</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:userTask id="ProjektantragInhaltlichPrufenTask" name="Projektantrag inhaltlich prüfen" camunda:candidateGroups="gl">
-      <bpmn:extensionElements>
-        <camunda:formData>
-          <camunda:formField id="inhaltlichBewilligt" label="Bewilligt?" type="boolean">
-            <camunda:validation>
-              <camunda:constraint name="required" />
-            </camunda:validation>
-          </camunda:formField>
-        </camunda:formData>
-      </bpmn:extensionElements>
+    <bpmn:userTask id="ProjektantragInhaltlichPrufenTask" name="Projektantrag inhaltlich prüfen" camunda:formKey="embedded:app:forms/AntragInhaltlichPruefen.html" camunda:candidateGroups="gl">
       <bpmn:incoming>SequenceFlow_1eotl33</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_106riq2</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:userTask id="ProjektantragPrufenUndErganzenTask" name="Projektantrag prüfen und ergänzen" camunda:candidateGroups="controlling">
-      <bpmn:extensionElements>
-        <camunda:formData>
-          <camunda:formField id="finanziellBewilligt" label="Bewilligt?" type="boolean">
-            <camunda:validation>
-              <camunda:constraint name="required" />
-            </camunda:validation>
-          </camunda:formField>
-        </camunda:formData>
-      </bpmn:extensionElements>
+    <bpmn:userTask id="ProjektantragPrufenUndErganzenTask" name="Projektantrag prüfen und ergänzen" camunda:formKey="embedded:app:forms/AntragFinanziellPruefen.html" camunda:candidateGroups="controlling">
       <bpmn:incoming>JaSequenceFlow</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0jbtx2v</bpmn:outgoing>
     </bpmn:userTask>
