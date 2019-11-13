@@ -1,0 +1,425 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_0zcn0xl" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.3.1">
+  <bpmn:collaboration id="Collaboration_18ft0fk">
+    <bpmn:participant id="ProzessportalParticipant" name="Prozessportal" processRef="Projekteroeffnung" />
+    <bpmn:participant id="ProjektmanagementDatenbankParticipant" name="Projektmanagement-Datenbank" />
+    <bpmn:participant id="SAPPMParticipant" name="SAP PM" />
+    <bpmn:messageFlow id="AlleMitarbeiterMessageFlow" name="Alle Mitarbeiter" sourceRef="ProjektmanagementDatenbankParticipant" targetRef="ProjektantragEingereichtStartEvent" />
+    <bpmn:messageFlow id="ProjektinformationenMessageFlow" name="Projekt-informationen" sourceRef="ProjektInPMDatenbankEintragenTask" targetRef="ProjektmanagementDatenbankParticipant" />
+    <bpmn:messageFlow id="ProjektInformationenMessageFlow" name="Projekt-Informationen" sourceRef="ProjektInSAPEroffnenTask" targetRef="SAPPMParticipant" />
+    <bpmn:messageFlow id="EroffnungsbestatigungMessageFlow" name="Eröffnungs-bestätigung" sourceRef="SAPPMParticipant" targetRef="ProjektInSAPEroffnenTask" />
+    <bpmn:messageFlow id="EinfugebestatigungMessageFlow" name="Einfüge-bestätigung" sourceRef="ProjektmanagementDatenbankParticipant" targetRef="ProjektInPMDatenbankEintragenTask" />
+  </bpmn:collaboration>
+  <bpmn:process id="Projekteroeffnung" name="Projekteröffnung" isExecutable="true">
+    <bpmn:laneSet id="LaneSet_00zl9s0">
+      <bpmn:lane id="FinanzcontrollingLane" name="Finanzcontrolling">
+        <bpmn:flowNodeRef>ProjektantragPrufenUndErganzenTask</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>N1WocheVerstrichenBoundaryEvent</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="GeschaftsleitungLane" name="Geschäftsleitung">
+        <bpmn:flowNodeRef>ProjektantragInhaltlichPrufenTask</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ErinnerungVersandtEndEvent1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>N2WochenVerstrichenBoundaryEvent</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="AutomatischLane" name="Automatisch">
+        <bpmn:flowNodeRef>ExclusiveGateway_0kdynbm</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>BewilligtGateway</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>BewilligtGateway1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ProjektEroffnetEndEvent</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>AblehnungMitteilenTask</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ErfolgreicheEroffnungMitteilenTask</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ProjektInPMDatenbankEintragenTask</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ProjektInSAPEroffnenTask</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ErinnerungVersandtEndEvent</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ProjektantragAbgelehntEndEvent</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="AntragstellerLane" name="Antragsteller">
+        <bpmn:flowNodeRef>ProjektantragEingereichtStartEvent</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="ProjektantragEingereichtStartEvent" name="Projektantrag eingereicht" camunda:initiator="antragsteller">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="projektName" label="Projekttitel*" type="string">
+            <camunda:validation>
+              <camunda:constraint name="required" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="gesamtKosten" label="Geplante Kosten*" type="long">
+            <camunda:validation>
+              <camunda:constraint name="required" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="projektStartDatum" label="Geplanter Projektstart*" type="date">
+            <camunda:validation>
+              <camunda:constraint name="required" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="projektEndDatum" label="Geplantes Projektende*" type="date">
+            <camunda:validation>
+              <camunda:constraint name="required" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="projektleiter" label="Projektleiter*" type="string">
+            <camunda:validation>
+              <camunda:constraint name="required" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="projektMitarbeiter" label="Projektmitarbeiter*" type="string">
+            <camunda:validation>
+              <camunda:constraint name="required" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="mitarbeiterStartDatum" label="Einsatzbeginn Mitarbeiter*" type="date">
+            <camunda:validation>
+              <camunda:constraint name="required" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="mitarbeiterEndDatum" label="Einsatzende Mitarbeiter*" type="date">
+            <camunda:validation>
+              <camunda:constraint name="required" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="bemerkungen" label="Bemerkungen" type="string" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>SequenceFlow_1eotl33</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_0kdynbm">
+      <bpmn:incoming>NeinSequenceFlow</bpmn:incoming>
+      <bpmn:incoming>NeinSequenceFlow1</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1p1p02r</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="BewilligtGateway" name="Bewilligt?">
+      <bpmn:incoming>SequenceFlow_106riq2</bpmn:incoming>
+      <bpmn:outgoing>JaSequenceFlow</bpmn:outgoing>
+      <bpmn:outgoing>NeinSequenceFlow</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="BewilligtGateway1" name="Bewilligt?">
+      <bpmn:incoming>SequenceFlow_0jbtx2v</bpmn:incoming>
+      <bpmn:outgoing>NeinSequenceFlow1</bpmn:outgoing>
+      <bpmn:outgoing>JaSequenceFlow1</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="ProjektEroffnetEndEvent" name="Projekt eröffnet">
+      <bpmn:incoming>SequenceFlow_1w3aixm</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="ProjektantragInhaltlichPrufenTask" name="Projektantrag inhaltlich prüfen" camunda:candidateGroups="gl">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="inhaltlichBewilligt" label="Bewilligt?" type="boolean">
+            <camunda:validation>
+              <camunda:constraint name="required" />
+            </camunda:validation>
+          </camunda:formField>
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1eotl33</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_106riq2</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="ProjektantragPrufenUndErganzenTask" name="Projektantrag prüfen und ergänzen" camunda:candidateGroups="controlling">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="finanziellBewilligt" label="Bewilligt?" type="boolean">
+            <camunda:validation>
+              <camunda:constraint name="required" />
+            </camunda:validation>
+          </camunda:formField>
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>JaSequenceFlow</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0jbtx2v</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sendTask id="AblehnungMitteilenTask" name="Ablehnung mitteilen" camunda:delegateExpression="${sendEmail}">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="mailSubject">"Projektantrag abgelehnt"</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1p1p02r</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0ftngsg</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:sendTask id="ErfolgreicheEroffnungMitteilenTask" name="Erfolgreiche Eröffnung mitteilen" camunda:delegateExpression="${sendEmail}">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="mailSubject">"Projekt eröffnet"</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1irn5iz</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1w3aixm</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:serviceTask id="ProjektInPMDatenbankEintragenTask" name="Projekt in PM-Datenbank eintragen" camunda:delegateExpression="${projektInPmDbErfassen}">
+      <bpmn:incoming>SequenceFlow_1ud9mae</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1irn5iz</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="ProjektInSAPEroffnenTask" name="Projekt in SAP eröffnen" camunda:delegateExpression="${projektInSapEroefffnen}">
+      <bpmn:incoming>JaSequenceFlow1</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1ud9mae</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="ErinnerungVersandtEndEvent" name="Erinnerung versandt">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="mailSubject">"So aber nicht - he!"</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1k56d0z</bpmn:incoming>
+      <bpmn:messageEventDefinition camunda:delegateExpression="${sendEmail}" />
+    </bpmn:endEvent>
+    <bpmn:endEvent id="ErinnerungVersandtEndEvent1" name="Erinnerung versandt">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="mailSubject">"Jetzt aber, Controller. Ab an die Arbeit!"</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_00whsod</bpmn:incoming>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_0hscsu5" camunda:delegateExpression="${sendEmail}" />
+    </bpmn:endEvent>
+    <bpmn:endEvent id="ProjektantragAbgelehntEndEvent" name="Projektantrag abgelehnt">
+      <bpmn:incoming>SequenceFlow_0ftngsg</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:boundaryEvent id="N2WochenVerstrichenBoundaryEvent" name="2 Wochen verstrichen" cancelActivity="false" attachedToRef="ProjektantragInhaltlichPrufenTask">
+      <bpmn:outgoing>SequenceFlow_1k56d0z</bpmn:outgoing>
+      <bpmn:timerEventDefinition>
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT14S</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:boundaryEvent id="N1WocheVerstrichenBoundaryEvent" name="1 Woche verstrichen" cancelActivity="false" attachedToRef="ProjektantragPrufenUndErganzenTask">
+      <bpmn:outgoing>SequenceFlow_00whsod</bpmn:outgoing>
+      <bpmn:timerEventDefinition>
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT7S</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1eotl33" sourceRef="ProjektantragEingereichtStartEvent" targetRef="ProjektantragInhaltlichPrufenTask" />
+    <bpmn:sequenceFlow id="NeinSequenceFlow" name="Nein" sourceRef="BewilligtGateway" targetRef="ExclusiveGateway_0kdynbm">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${!inhaltlichBewilligt}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="NeinSequenceFlow1" name="Nein" sourceRef="BewilligtGateway1" targetRef="ExclusiveGateway_0kdynbm">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${!finanziellBewilligt}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_1p1p02r" sourceRef="ExclusiveGateway_0kdynbm" targetRef="AblehnungMitteilenTask" />
+    <bpmn:sequenceFlow id="SequenceFlow_106riq2" sourceRef="ProjektantragInhaltlichPrufenTask" targetRef="BewilligtGateway" />
+    <bpmn:sequenceFlow id="JaSequenceFlow" name="Ja" sourceRef="BewilligtGateway" targetRef="ProjektantragPrufenUndErganzenTask">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${inhaltlichBewilligt}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_0jbtx2v" sourceRef="ProjektantragPrufenUndErganzenTask" targetRef="BewilligtGateway1" />
+    <bpmn:sequenceFlow id="JaSequenceFlow1" name="Ja" sourceRef="BewilligtGateway1" targetRef="ProjektInSAPEroffnenTask">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${finanziellBewilligt}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_0ftngsg" sourceRef="AblehnungMitteilenTask" targetRef="ProjektantragAbgelehntEndEvent" />
+    <bpmn:sequenceFlow id="SequenceFlow_1ud9mae" sourceRef="ProjektInSAPEroffnenTask" targetRef="ProjektInPMDatenbankEintragenTask" />
+    <bpmn:sequenceFlow id="SequenceFlow_1irn5iz" sourceRef="ProjektInPMDatenbankEintragenTask" targetRef="ErfolgreicheEroffnungMitteilenTask" />
+    <bpmn:sequenceFlow id="SequenceFlow_1w3aixm" sourceRef="ErfolgreicheEroffnungMitteilenTask" targetRef="ProjektEroffnetEndEvent" />
+    <bpmn:sequenceFlow id="SequenceFlow_1k56d0z" sourceRef="N2WochenVerstrichenBoundaryEvent" targetRef="ErinnerungVersandtEndEvent" />
+    <bpmn:sequenceFlow id="SequenceFlow_00whsod" sourceRef="N1WocheVerstrichenBoundaryEvent" targetRef="ErinnerungVersandtEndEvent1" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_18ft0fk">
+      <bpmndi:BPMNShape id="Participant_1x20cfz_di" bpmnElement="ProzessportalParticipant" isHorizontal="true">
+        <dc:Bounds x="160" y="230" width="1160" height="790" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_15rn75t_di" bpmnElement="AntragstellerLane" isHorizontal="true">
+        <dc:Bounds x="190" y="230" width="1130" height="143" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_0evd1qh_di" bpmnElement="AutomatischLane" isHorizontal="true">
+        <dc:Bounds x="190" y="373" width="1130" height="337" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_1c72a3u_di" bpmnElement="GeschaftsleitungLane" isHorizontal="true">
+        <dc:Bounds x="190" y="710" width="1130" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_0ziis1l_di" bpmnElement="FinanzcontrollingLane" isHorizontal="true">
+        <dc:Bounds x="190" y="870" width="1130" height="150" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_0igjtgy_di" bpmnElement="ProjektantragEingereichtStartEvent">
+        <dc:Bounds x="252" y="272" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="239" y="315" width="66" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_036ormk_di" bpmnElement="BewilligtGateway" isMarkerVisible="true">
+        <dc:Bounds x="555" y="415" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="557" y="391" width="47" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_04y0qx2_di" bpmnElement="BewilligtGateway1" isMarkerVisible="true">
+        <dc:Bounds x="715" y="525" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="658" y="543" width="47" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_0kdynbm_di" bpmnElement="ExclusiveGateway_0kdynbm" isMarkerVisible="true">
+        <dc:Bounds x="715" y="415" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0ai4l7f_di" bpmnElement="ProjektantragAbgelehntEndEvent">
+        <dc:Bounds x="1232" y="422" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1217" y="465" width="66" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0ql6lz5_di" bpmnElement="ProjektEroffnetEndEvent">
+        <dc:Bounds x="1232" y="532" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1212" y="575" width="76" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1eotl33_di" bpmnElement="SequenceFlow_1eotl33">
+        <di:waypoint x="288" y="290" />
+        <di:waypoint x="320" y="290" />
+        <di:waypoint x="320" y="810" />
+        <di:waypoint x="350" y="810" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_106riq2_di" bpmnElement="SequenceFlow_106riq2">
+        <di:waypoint x="450" y="810" />
+        <di:waypoint x="520" y="810" />
+        <di:waypoint x="520" y="440" />
+        <di:waypoint x="555" y="440" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_03r9f0n_di" bpmnElement="JaSequenceFlow">
+        <di:waypoint x="580" y="465" />
+        <di:waypoint x="580" y="960" />
+        <di:waypoint x="610" y="960" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="594" y="484" width="12" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_081v8ad_di" bpmnElement="NeinSequenceFlow">
+        <di:waypoint x="605" y="440" />
+        <di:waypoint x="715" y="440" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="628" y="413" width="23" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0jbtx2v_di" bpmnElement="SequenceFlow_0jbtx2v">
+        <di:waypoint x="710" y="960" />
+        <di:waypoint x="740" y="960" />
+        <di:waypoint x="740" y="575" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1v032q6_di" bpmnElement="NeinSequenceFlow1">
+        <di:waypoint x="740" y="525" />
+        <di:waypoint x="740" y="465" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="708" y="503" width="23" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_00bqm56_di" bpmnElement="JaSequenceFlow1">
+        <di:waypoint x="765" y="550" />
+        <di:waypoint x="830" y="550" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="774" y="523" width="12" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1p1p02r_di" bpmnElement="SequenceFlow_1p1p02r">
+        <di:waypoint x="765" y="440" />
+        <di:waypoint x="830" y="440" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0ftngsg_di" bpmnElement="SequenceFlow_0ftngsg">
+        <di:waypoint x="930" y="440" />
+        <di:waypoint x="1232" y="440" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1ud9mae_di" bpmnElement="SequenceFlow_1ud9mae">
+        <di:waypoint x="930" y="550" />
+        <di:waypoint x="960" y="550" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1irn5iz_di" bpmnElement="SequenceFlow_1irn5iz">
+        <di:waypoint x="1060" y="550" />
+        <di:waypoint x="1090" y="550" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1w3aixm_di" bpmnElement="SequenceFlow_1w3aixm">
+        <di:waypoint x="1190" y="550" />
+        <di:waypoint x="1232" y="550" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="UserTask_0qzkmxd_di" bpmnElement="ProjektantragInhaltlichPrufenTask">
+        <dc:Bounds x="350" y="770" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_1j0hkgv_di" bpmnElement="ProjektantragPrufenUndErganzenTask">
+        <dc:Bounds x="610" y="920" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SendTask_1jczn2f_di" bpmnElement="AblehnungMitteilenTask">
+        <dc:Bounds x="830" y="400" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SendTask_0ek2cer_di" bpmnElement="ErfolgreicheEroffnungMitteilenTask">
+        <dc:Bounds x="1090" y="510" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_1whloux_di" bpmnElement="ProjektInPMDatenbankEintragenTask">
+        <dc:Bounds x="960" y="510" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_03rs2rh_di" bpmnElement="ProjektInSAPEroffnenTask">
+        <dc:Bounds x="830" y="510" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BoundaryEvent_05whs3m_di" bpmnElement="N2WochenVerstrichenBoundaryEvent">
+        <dc:Bounds x="372" y="752" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="403" y="726" width="53" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1k56d0z_di" bpmnElement="SequenceFlow_1k56d0z">
+        <di:waypoint x="390" y="752" />
+        <di:waypoint x="390" y="620" />
+        <di:waypoint x="442" y="620" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_0hawr46_di" bpmnElement="ErinnerungVersandtEndEvent">
+        <dc:Bounds x="442" y="602" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="433" y="645" width="54" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BoundaryEvent_13e1rrh_di" bpmnElement="N1WocheVerstrichenBoundaryEvent">
+        <dc:Bounds x="632" y="902" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="655" y="876" width="53" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_1df4tqw_di" bpmnElement="ErinnerungVersandtEndEvent1">
+        <dc:Bounds x="682" y="732" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="673" y="775" width="54" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_00whsod_di" bpmnElement="SequenceFlow_00whsod">
+        <di:waypoint x="650" y="902" />
+        <di:waypoint x="650" y="750" />
+        <di:waypoint x="682" y="750" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Participant_13y14in_di" bpmnElement="ProjektmanagementDatenbankParticipant" isHorizontal="true">
+        <dc:Bounds x="160" y="80" width="1160" height="60" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="MessageFlow_0mgrf7t_di" bpmnElement="AlleMitarbeiterMessageFlow">
+        <di:waypoint x="270" y="140" />
+        <di:waypoint x="270" y="272" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="283" y="183" width="74" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="MessageFlow_1ebs8pd_di" bpmnElement="ProjektinformationenMessageFlow">
+        <di:waypoint x="1000" y="510" />
+        <di:waypoint x="1000" y="140" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="916" y="176" width="67" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Participant_0pgy8ti_di" bpmnElement="SAPPMParticipant" isHorizontal="true">
+        <dc:Bounds x="160" y="1080" width="1160" height="60" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="MessageFlow_0wegosg_di" bpmnElement="ProjektInformationenMessageFlow">
+        <di:waypoint x="870" y="590" />
+        <di:waypoint x="870" y="1080" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="786" y="1036" width="68" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="MessageFlow_1ony4mj_di" bpmnElement="EroffnungsbestatigungMessageFlow">
+        <di:waypoint x="890" y="1080" />
+        <di:waypoint x="890" y="590" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="911" y="1036" width="57" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="MessageFlow_0rdk5qe_di" bpmnElement="EinfugebestatigungMessageFlow">
+        <di:waypoint x="1030" y="140" />
+        <di:waypoint x="1030" y="510" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1051" y="176" width="57" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
