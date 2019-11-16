@@ -118,6 +118,12 @@
       <artifactId>spring-boot-starter-mail</artifactId> 
     </dependency> 
 
+    <dependency>
+      <groupId>org.json</groupId>
+      <artifactId>json</artifactId>
+      <version>20190722</version>
+    </dependency>
+
   </dependencies>
 
   <!-- Konfiguration des Build-Prozesses -->
